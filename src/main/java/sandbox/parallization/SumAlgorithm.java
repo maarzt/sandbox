@@ -6,10 +6,7 @@ import net.imglib2.view.Views;
 
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -31,7 +28,7 @@ import java.util.stream.LongStream;
  * {@code
  * Parallelization.multiThreaded( () -> SumAlgorithm.sum( image ) );
  * }
- * Or with a specific executor service, see: {@link Parallelization#useExecutor(ExecutorService, Supplier)}
+ * Or with a specific executor service, see: {@link Parallelization#useExecutor(ExecutorService, Callable)}
  */
 public class SumAlgorithm
 {
@@ -46,22 +43,14 @@ public class SumAlgorithm
 		}
 		else
 		{
-			ExecutorService executor = Parallelization.getExecutorService();
 			int lastDim = image.numDimensions() - 1;
-			List< Callable< Long > > callables = LongStream.rangeClosed( image.min( lastDim ), image.max( lastDim ) )
-					.mapToObj( index -> ( Callable< Long > ) () -> sum( Views.hyperSlice( image, lastDim, index ) ) )
+			final long min = image.min( lastDim );
+			final long max = image.max( lastDim );
+			List< RandomAccessibleInterval<IntType> > slices = LongStream.rangeClosed( min, max )
+					.mapToObj( position -> Views.hyperSlice( image, lastDim, position ) )
 					.collect( Collectors.toList() );
-			try
-			{
-				long sum = 0;
-				for( Future<Long> future : executor.invokeAll( callables ) )
-					sum = future.get();
-				return sum;
-			}
-			catch ( InterruptedException | ExecutionException e )
-			{
-				throw new RuntimeException( e );
-			}
+			List< Long > subSums = Parallelization.forEach( slices, SumAlgorithm::sum );
+			return subSums.stream().mapToLong( Long::longValue ).sum();
 		}
 	}
 }

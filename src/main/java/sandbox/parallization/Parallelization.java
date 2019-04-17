@@ -4,11 +4,18 @@ import sandbox.executors.ForkJoinExecutorService;
 import sandbox.executors.ParallelismLevel;
 import sandbox.executors.SequentialExecutorService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
-import java.util.function.Supplier;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A new way to configure an algorithm for parallelization.
@@ -51,6 +58,8 @@ public final class Parallelization
 			return SEQUENTIAL;
 	} );
 
+	// Methods to support the implementation of an multi-threaded algorithm
+
 	public static ExecutorService getExecutorService()
 	{
 		return executor.get();
@@ -60,6 +69,48 @@ public final class Parallelization
 	{
 		return ParallelismLevel.get( getExecutorService() );
 	}
+
+	public static void runAll( List< Runnable > tasks )
+	{
+		List< Callable< Object > > callables = tasks.stream().map( Executors::callable ).collect( Collectors.toList() );
+		final ExecutorService executorService = getExecutorService();
+		try
+		{
+			List< Future< Object > > futures = executorService.invokeAll( callables );
+			for ( Future< Object > future : futures )
+				future.get();
+		}
+		catch ( InterruptedException | ExecutionException e )
+		{
+			throw new RuntimeException( e );
+		}
+	}
+
+	public static < T > void forEach( List< T > parameters, Consumer< T > task )
+	{
+		List< Runnable > runnables = parameters.stream().map( input -> ( Runnable ) () -> task.accept( input ) ).collect( Collectors.toList() );
+		runAll( runnables );
+	}
+
+	public static < T, R > List< R > forEach( List< T > parameters, Function< T, R > task )
+	{
+		List< Callable< R > > callables = parameters.stream().map( input -> ( Callable< R > ) () -> task.apply( input ) ).collect( Collectors.toList() );
+		ExecutorService executorService = getExecutorService();
+		try
+		{
+			List< Future< R > > futures = executorService.invokeAll( callables );
+			List< R > results = new ArrayList<>( futures.size() );
+			for ( Future< R > future : futures )
+				results.add( future.get() );
+			return results;
+		}
+		catch ( InterruptedException | ExecutionException e )
+		{
+			throw new RuntimeException( e );
+		}
+	}
+
+	// Method to call a multi-threaded algorithm
 
 	public static void singleThreaded( Runnable task )
 	{
@@ -104,8 +155,8 @@ public final class Parallelization
 		}
 		catch ( Exception e )
 		{
-			if( e instanceof RuntimeException )
-				throw (RuntimeException) e;
+			if ( e instanceof RuntimeException )
+				throw ( RuntimeException ) e;
 			throw new RuntimeException( e );
 		}
 		finally
