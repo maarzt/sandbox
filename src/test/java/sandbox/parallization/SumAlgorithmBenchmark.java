@@ -23,6 +23,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Demonstrates how to use {@link Parallelization} to execute a algorithm
+ * single threaded / multi threaded ....
+ * And shows the execution time.
+ */
 @Fork( 0 )
 @Warmup( iterations = 0 )
 @Measurement( iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS )
@@ -63,6 +68,12 @@ public class SumAlgorithmBenchmark
 	public Long singleThreadedSum()
 	{
 		return Parallelization.singleThreaded( () -> SumAlgorithm.sum( image ) );
+	}
+
+	@Benchmark
+	public Long defaultBehavior()
+	{
+		return SumAlgorithm.sum( image );
 	}
 
 	public static void main( String... args ) throws RunnerException
