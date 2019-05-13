@@ -1,2 +1,1 @@
-# sandbox
-Sandbox for pom-scijava based java code
+# Minimal Weka Fast Random Forest Example
