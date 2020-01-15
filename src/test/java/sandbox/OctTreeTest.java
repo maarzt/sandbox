@@ -32,7 +32,7 @@ public class OctTreeTest {
 	@Test
 	public void testSmallSquarePixel() {
 		OctTree< IntType > tree = new OctTree<>(1,
-				new SimpleTree(one, zero, zero, zero, zero, zero, zero, zero));
+				new Node(one, zero, zero, zero, zero, zero, zero, zero));
 		Img< IntType > expected = ArrayImgs.ints(new int[] { 1, 0, 0, 0, 0, 0, 0, 0 }, 2, 2, 2);
 		ImgLib2Assert.assertImageEquals( expected, tree );
 	}

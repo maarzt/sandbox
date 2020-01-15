@@ -2,11 +2,11 @@ package sandbox;
 
 import java.util.Arrays;
 
-public class SimpleTree {
+public class Node {
 
 	private final Object[] childs;
 
-	public SimpleTree(Object... childs) {
+	public Node(Object... childs) {
 		this.childs = childs;
 	}
 

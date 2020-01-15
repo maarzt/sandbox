@@ -10,9 +10,9 @@ import java.util.function.Function;
 
 public class OctTree<T> implements RandomAccessibleInterval<T> {
 
-	final int depth;
+	private final int depth;
 
-	final Object root;
+	private final Object root;
 
 	public OctTree(int depth, Object root) {
 		this.depth = depth;
@@ -33,7 +33,7 @@ public class OctTree<T> implements RandomAccessibleInterval<T> {
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++) childs[i] = createTree(cube.child(i),
 				initializer);
-		return new SimpleTree(childs);
+		return new Node(childs);
 	}
 
 	@Override
@@ -61,6 +61,14 @@ public class OctTree<T> implements RandomAccessibleInterval<T> {
 		return 3;
 	}
 
+	public Object getRoot() {
+		return root;
+	}
+
+	public int getDepth() {
+		return depth;
+	}
+
 	public class RA extends Point implements RandomAccess<T> {
 
 		private RA(RA other) {
@@ -83,15 +91,15 @@ public class OctTree<T> implements RandomAccessibleInterval<T> {
 			long y = getLongPosition(1);
 			long z = getLongPosition(2);
 			for(int d = depth - 1; d >= 0; d--) {
-				if (!(node instanceof SimpleTree))
+				if (!(node instanceof Node))
 					return (T) node;
 				long bitX = (x >> d) & 1;
 				long bitY = (y >> d) & 1;
 				long bitZ = (z >> d) & 1;
 				long index = bitX | (bitY << 1) | (bitZ << 2);
-				node = ((SimpleTree) node).child((int) index);
+				node = ((Node) node).child((int) index);
 			}
-			if (!(node instanceof SimpleTree))
+			if (!(node instanceof Node))
 				return (T) node;
 			throw new AssertionError("Tree is to deep.");
 		}
