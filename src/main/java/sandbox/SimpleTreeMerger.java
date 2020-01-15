@@ -1,13 +1,17 @@
 package sandbox;
 
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 class SimpleTreeMerger {
 
 	private final BiFunction operation;
 
-	public SimpleTreeMerger(BiFunction operation) {
+	private final Predicate exit;
+
+	public SimpleTreeMerger(BiFunction operation, Predicate exit) {
 		this.operation = operation;
+		this.exit = exit;
 	}
 
 	public Object merge(Object treeA, Object treeB) {
@@ -28,19 +32,23 @@ class SimpleTreeMerger {
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++)
 			childs[i] = merge(treeA.child(i), treeB.child(i));
-		return new Node(childs);
+		return new SimpleNode(childs);
 	}
 
 	private Object internMerge(Node treeA, Object valueB) {
+		if(exit.test(valueB))
+			return treeA;
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++) childs[i] = merge(treeA.child(i), valueB);
-		return new Node(childs);
+		return new SimpleNode(childs);
 	}
 
 	private Object internMerge(Object valueA, Node treeB) {
+		if(exit.test(valueA))
+			return treeB;
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++) childs[i] = merge(valueA, treeB.child(i));
-		return new Node(childs);
+		return new SimpleNode(childs);
 	}
 
 	private Object internMerge(Object valueA, Object valueB) {

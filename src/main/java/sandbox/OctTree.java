@@ -33,7 +33,7 @@ public class OctTree<T> implements RandomAccessibleInterval<T> {
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++) childs[i] = createTree(cube.child(i),
 				initializer);
-		return new Node(childs);
+		return new SimpleNode(childs);
 	}
 
 	@Override

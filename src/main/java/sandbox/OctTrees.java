@@ -4,6 +4,7 @@ import net.imglib2.RealPoint;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 public class OctTrees {
 
@@ -19,16 +20,16 @@ public class OctTrees {
 		});
 	}
 
-	public static <A, B, C> OctTree< C > merge(OctTree< A > a, OctTree< B > b, BiFunction<A, B, C> operation) {
+	public static <A, C> OctTree< C > merge(OctTree< A > a, OctTree< A > b, BiFunction<A, A, C> operation, Predicate<A> exit) {
 		int depth = a.getDepth();
 		if( depth != b.getDepth() )
 			throw new AssertionError("Both trees must have the same depth.");
-		Object root = new SimpleTreeMerger(operation).merge(a.getRoot(), b.getRoot());
+		Object root = new SimpleTreeMerger(operation, exit).merge(a.getRoot(), b.getRoot());
 		return new OctTree<>(depth, root);
 	}
 
 	public static OctTree< IntType > max(OctTree<IntType> a, OctTree<IntType> b) {
-		return merge(a,b, (a1, b1) -> a1.getInteger() > b1.getInteger() ? a1 : b1);
+		return merge(a,b, (a1, b1) -> a1.getInteger() > b1.getInteger() ? a1 : b1, a1 -> a1.getInteger() <= 0);
 	}
 
 }
