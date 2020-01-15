@@ -4,46 +4,32 @@ import bdv.util.BdvFunctions;
 import net.imglib2.Interval;
 import net.imglib2.RealPoint;
 import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.Random;
+import java.util.function.Function;
 
 public class OctTreeDemo {
 
-	private static final Sphere sphere = new Sphere(new RealPoint(50, 50, 50), 300);
+	private static final Sphere sphere = new Sphere(new RealPoint(900, 400, 2000), 1000);
+	private static final IntType one = new IntType(1);
+	private static final IntType zero = new IntType(0);
 
 	private static Random random = new Random();
 
 	public static void main(String... args) {
-		OctTree< ARGBType > image = newOctTree(12, sphere);
-		BdvFunctions.show(image, "sphere").setDisplayRange(0, 255);
+		OctTree< IntType > image = newOctTree(12, sphere);
+		BdvFunctions.show(image, "sphere").setDisplayRange(0, 1);
 	}
 
-	private static OctTree< ARGBType > newOctTree(int depth, IntervalMask initializer) {
-		Node< ARGBType > branch = getBranch(new Cube(depth), initializer);
-		return new OctTree<>(depth, branch);
-	}
-
-	private static Node< ARGBType > getBranch(Cube cube,
-			IntervalMask initializer) {
-		OctTreeInitializer<ARGBType> oti = interval -> {
-			if(initializer.contains(interval))
-				return new ARGBType(random.nextInt() & 0x00ff00);
-			if(!initializer.intersects(interval))
-				return new ARGBType(random.nextInt() & 0xff0000);
+	private static OctTree< IntType > newOctTree(int depth, IntervalMask intervalMask) {
+		return new OctTree<>(depth, interval -> {
+			if(intervalMask.contains(interval))
+				return one;
+			if(!intervalMask.intersects(interval))
+				return zero;
 			return null;
-		};
-		ARGBType value = oti.valueForInterval(cube);
-		if(value != null)
-			return new Leaf<ARGBType>(value);
-
-		Node[] childs = new Node[8];
-		for (int i = 0; i < 8; i++) childs[i] = getBranch(cube.child(i),
-				initializer);
-		return new Branch<>(childs);
+		});
 	}
 
-	public interface OctTreeInitializer<T> {
-
-		T valueForInterval(Interval interval);
-	}
 }

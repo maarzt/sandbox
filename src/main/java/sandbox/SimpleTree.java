@@ -2,15 +2,15 @@ package sandbox;
 
 import java.util.Arrays;
 
-public class Branch<T> implements Node< T > {
+public class SimpleTree {
 
-	private final Node[] childs;
+	private final Object[] childs;
 
-	public Branch(Node<T>... childs) {
+	public SimpleTree(Object... childs) {
 		this.childs = childs;
 	}
 
-	public Node<T> child(int i) {
+	public Object child(int i) {
 		return childs[i];
 	}
 
