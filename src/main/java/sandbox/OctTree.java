@@ -71,6 +71,15 @@ public class OctTree<T> implements RandomAccessibleInterval<T> {
 
 	public class RA extends Point implements RandomAccess<T> {
 
+		private final Object root = initThreadSafeRoot();
+
+		private Object initThreadSafeRoot() {
+			Object node = OctTree.this.root;
+			if(node instanceof Node)
+				return ((Node) node).threadSafeCopy();
+			return node;
+		}
+
 		private RA(RA other) {
 			super(other);
 		}
