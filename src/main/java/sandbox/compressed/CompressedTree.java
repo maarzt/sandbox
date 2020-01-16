@@ -1,4 +1,4 @@
-package sandbox;
+package sandbox.compressed;
 
 import gnu.trove.list.array.TIntArrayList;
 

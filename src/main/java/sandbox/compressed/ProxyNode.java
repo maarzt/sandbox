@@ -1,4 +1,6 @@
-package sandbox;
+package sandbox.compressed;
+
+import sandbox.Node;
 
 public class ProxyNode< T > {
 

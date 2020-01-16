@@ -33,7 +33,18 @@ public class Sphere implements IntervalMask {
 
 	@Override
 	public boolean intersects(Interval interval) {
-		return contains(Points.projectToInterval(center, interval));
+		double squaredDistance = 0;
+		for (int d = 0; d < center.numDimensions(); d++) {
+			double c = center.getDoublePosition(d);
+			double max = interval.realMax(d);
+			double min = interval.realMin(d);
+			squaredDistance += square( ensureRange(0.0, min - c, max - c) );
+		}
+		return squaredDistance <= squaredRadius;
+	}
+
+	private static double ensureRange(double value, double min, double max) {
+		return Math.min(Math.max(value, min), max);
 	}
 
 	private double square(double value) {

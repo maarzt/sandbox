@@ -1,4 +1,4 @@
-package sandbox;
+package sandbox.compressed;
 
 public interface BiMap<T> {
 
