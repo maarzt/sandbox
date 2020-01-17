@@ -7,11 +7,15 @@ class SimpleTreeMerger {
 
 	private final BiFunction operation;
 
-	private final Predicate exit;
+	private final Predicate exitA;
 
-	public SimpleTreeMerger(BiFunction operation, Predicate exit) {
+	private final Predicate exitB;
+
+	public SimpleTreeMerger(BiFunction operation, Predicate exitA,
+			Predicate exitB) {
 		this.operation = operation;
-		this.exit = exit;
+		this.exitA = exitA;
+		this.exitB = exitB;
 	}
 
 	public Object merge(Object treeA, Object treeB) {
@@ -36,7 +40,7 @@ class SimpleTreeMerger {
 	}
 
 	private Object internMerge(Node treeA, Object valueB) {
-		if(exit.test(valueB))
+		if(exitB.test(valueB))
 			return treeA;
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++) childs[i] = merge(treeA.child(i), valueB);
@@ -44,7 +48,7 @@ class SimpleTreeMerger {
 	}
 
 	private Object internMerge(Object valueA, Node treeB) {
-		if(exit.test(valueA))
+		if(exitA.test(valueA))
 			return treeB;
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++) childs[i] = merge(valueA, treeB.child(i));

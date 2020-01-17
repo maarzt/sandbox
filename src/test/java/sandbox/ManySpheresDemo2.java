@@ -1,0 +1,33 @@
+package sandbox;
+
+import bdv.util.BdvFunctions;
+import net.imglib2.RealPoint;
+import net.imglib2.img.array.ArrayImgs;
+import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelingMapping;
+import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.type.numeric.integer.IntType;
+
+import java.util.Random;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+
+public class ManySpheresDemo2 {
+
+	public static void main(String... args) {
+		Random random = new Random();
+		int depth = 11;
+		int size = 1 << depth;
+		OctTree< IntType > c = new OctTree<>(depth, new IntType());
+		int numberOfSegments = 100000;
+		for (int i = 0; i < numberOfSegments; i++) {
+			System.out.println(i);
+			Sphere intervalMask = new Sphere(
+					new RealPoint(random.nextInt(size), random.nextInt(size),
+							random.nextInt(size)), random.nextInt(20));
+			OctTree< IntType > a = OctTrees.create(depth, intervalMask, new IntType(i+1), new IntType(0));
+			c = OctTrees.max(c, a);
+		}
+		BdvFunctions.show(c, "sphere").setDisplayRange(0, numberOfSegments);
+	}
+}
