@@ -19,4 +19,16 @@ public class SimpleNode implements Node {
 	public String toString() {
 		return Arrays.toString(childs);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Node))
+			return false;
+		Node node = (Node) obj;
+		for (int i = 0; i < 8; i++) {
+			if(!child(i).equals(node.child(i)))
+				return false;
+		}
+		return true;
+	}
 }
