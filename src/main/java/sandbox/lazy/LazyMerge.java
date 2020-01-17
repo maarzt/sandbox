@@ -1,22 +1,39 @@
 package sandbox.lazy;
 
 import sandbox.Node;
+import sandbox.OctTree;
 
 import java.util.function.BiFunction;
 
-public interface LazyMerge {
+public final class LazyMerge {
 
-	static Object merge(Object a, Object b,
-			BiFunction operation)
+	private LazyMerge() {
+		// prevent from instantiation
+	}
+
+	public static <A, B, C> OctTree<C> merge(OctTree< A > a, OctTree< B > b,
+			BiFunction< A, B, C > operation)
 	{
-		boolean aIsNode = a instanceof Node;
-		boolean bIsNode = b instanceof Node;
-		if( ! aIsNode && ! bIsNode )
+		return new OctTree<>(a.getDepth(),
+				mergeTrees(a.getRoot(), b.getRoot(), operation));
+	}
+
+	static Object mergeTrees(Object a, Object b, BiFunction operation)
+	{
+		if( !isNode(a) && !isNode(b))
 			return operation.apply(a, b);
 		return new LazyNode(a, b, operation);
 	}
 
-	class LazyNode implements Node {
+	private static boolean isNode(Object a) {
+		return a instanceof Node;
+	}
+
+	private static Object getChildOrValue(int i, Object a) {
+		return isNode(a) ? ((Node) a).child(i) : a;
+	}
+
+	private static class LazyNode implements Node {
 
 		private final Object a;
 
@@ -38,14 +55,10 @@ public interface LazyMerge {
 			if(child == null) {
 				Object childA = getChildOrValue(i, a);
 				Object childB = getChildOrValue(i, b);
-				child = merge(childA, childB, operation);
+				child = mergeTrees(childA, childB, operation);
 				children[i] = child;
 			}
 			return child;
-		}
-
-		private Object getChildOrValue(int i, Object a) {
-			return a instanceof Node ? ((Node) a).child(i) : a;
 		}
 	}
 }
