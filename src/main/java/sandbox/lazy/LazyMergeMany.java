@@ -25,7 +25,7 @@ public final class LazyMergeMany {
 		T value = neutral;
 		for(Object tree : trees) {
 			if( tree instanceof Node )
-				nodes.add((Node) tree);
+				nodes.add((Node) ((Node) tree).threadSafeCopy());
 			else
 				value = operation.apply(value, (T) tree);
 		}
@@ -54,10 +54,12 @@ public final class LazyMergeMany {
 		public Object child(int i) {
 			Object child = children[i];
 			if(child == null) {
-				List<Object> c = new ArrayList<>(nodes.size());
-				for (Node node : nodes) c.add(node.child(i));
-				child = LazyMergeMany.mergeTrees(value, operation, c);
-				children[i] = child;
+				synchronized (children) {
+					List< Object > c = new ArrayList<>(nodes.size());
+					for (Node node : nodes) c.add(node.child(i));
+					child = LazyMergeMany.mergeTrees(value, operation, c);
+					children[i] = child;
+				}
 			}
 			return child;
 		}

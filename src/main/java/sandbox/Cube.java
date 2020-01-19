@@ -1,19 +1,28 @@
 package sandbox;
 
 import net.imglib2.Interval;
+import net.imglib2.Localizable;
 import net.imglib2.Point;
 
 public class Cube implements Interval {
 
 	private final int depth;
 
-	private final Point position = new Point(3);
+	private final Point position;
 
 	private final Cube child;
 
 	public Cube(int depth) {
 		this.depth = depth;
+		this.position = new Point(3);
 		this.child = (depth > 0) ? new Cube(depth - 1) : null;
+	}
+
+	/** Copy constructor */
+	private Cube(Cube original) {
+		this.depth = original.depth;
+		this.position = new Point(original.position);
+		this.child = original.child != null ? new Cube(original.child) : null;
 	}
 
 	@Override
@@ -32,11 +41,21 @@ public class Cube implements Interval {
 	}
 
 	public Cube child(long index) {
-		child.position.setPosition(position);
-		for (int d = 0; d < 3; d++) {
-			if ( (index & (1 << d)) != 0 )
-				child.position.move(1 << (depth - 1), d);
-		}
+		child.setPosition(position, index);
 		return child;
+	}
+
+	public boolean hasChildren() {
+		return child != null;
+	}
+
+	private void setPosition(Localizable parentPosition, long index) {
+		for (int d = 0; d < 3; d++) {
+			position.setPosition(parentPosition.getLongPosition(d) + (((index >> d) & 1) << depth), d);
+		}
+	}
+
+	public Cube threadSafeCopy() {
+		return new Cube(this);
 	}
 }
