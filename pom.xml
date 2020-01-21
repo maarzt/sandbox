@@ -119,5 +119,10 @@
 			<version>1.19</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>sizeof</artifactId>
+			<version>0.3.0</version>
+		</dependency>
 	</dependencies>
 </project>
