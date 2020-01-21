@@ -16,7 +16,7 @@ public class ManySpheresDemo {
 		for (int i = 0; i < 100000; i++) {
 			System.out.println(i);
 			OctTree< IntType > a = OctTrees.create(depth,
-					new Sphere(new RealPoint(random.nextInt(size), random.nextInt(size), random.nextInt(size)), random.nextInt(10)));
+					new Sphere(new RealPoint(random.nextInt(size), random.nextInt(size), random.nextInt(size)), random.nextInt(20)));
 			c = OctTrees.max(c, a);
 		}
 		BdvFunctions.show(c, "sphere").setDisplayRange(0, 1);

@@ -1,6 +1,7 @@
 package sandbox;
 
 import net.imglib2.Interval;
+import net.imglib2.Localizable;
 import net.imglib2.RealLocalizable;
 import net.imglib2.RealPoint;
 
@@ -15,7 +16,8 @@ public class Sphere implements IntervalMask {
 		this.squaredRadius = square(radius);
 	}
 
-	public boolean contains(RealLocalizable localizable) {
+	@Override
+	public boolean contains(Localizable localizable) {
 		return Points.squaredDistance(localizable, center) <= squaredRadius;
 	}
 
