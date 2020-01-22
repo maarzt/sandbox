@@ -3,6 +3,7 @@ package sandbox.lazy;
 import sandbox.Node;
 import sandbox.OctTree;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BinaryOperator;
@@ -42,7 +43,16 @@ public final class LazyMergeMany {
 
 		private final BinaryOperator<T> operation;
 
-		private final Object[] children = new Object[8];
+		private final WeakReference[] children = new WeakReference[] {
+				new WeakReference(null),
+				new WeakReference(null),
+				new WeakReference(null),
+				new WeakReference(null),
+				new WeakReference(null),
+				new WeakReference(null),
+				new WeakReference(null),
+				new WeakReference(null)
+		};
 
 		public LazyNode(T value, List<Node> nodes, BinaryOperator<T> operation) {
 			this.value = value;
@@ -52,13 +62,13 @@ public final class LazyMergeMany {
 
 		@Override
 		public Object child(int i) {
-			Object child = children[i];
+			Object child = children[i].get();
 			if(child == null) {
 				synchronized (children) {
 					List< Object > c = new ArrayList<>(nodes.size());
 					for (Node node : nodes) c.add(node.child(i));
 					child = LazyMergeMany.mergeTrees(value, operation, c);
-					children[i] = child;
+					children[i] = new WeakReference(child);
 				}
 			}
 			return child;
