@@ -1,6 +1,7 @@
 package sandbox;
 
 import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.util.Util;
 
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
@@ -37,7 +38,7 @@ public class OctTrees {
 
 	public static OctTree< IntType > max(OctTree<IntType> a, OctTree<IntType> b) {
 		Predicate< IntType > exit = a1 -> a1.getInteger() <= 0;
-		return merge(a,b, (a1, b1) -> a1.getInteger() > b1.getInteger() ? a1 : b1, exit, exit);
+		return merge(a,b, Util::max, exit, exit);
 	}
 
 }

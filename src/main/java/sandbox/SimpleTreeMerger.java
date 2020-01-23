@@ -36,6 +36,18 @@ class SimpleTreeMerger {
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++)
 			childs[i] = merge(treeA.child(i), treeB.child(i));
+		return createNode(childs);
+	}
+
+	private Object createNode(Object[] childs) {
+		Object value = childs[0];
+		if(! (value instanceof Node)) {
+			for (int i = 1; i < 8; i++) {
+				if (value != childs[i])
+					return new SimpleNode(childs);
+			}
+			return value;
+		}
 		return new SimpleNode(childs);
 	}
 
@@ -44,7 +56,7 @@ class SimpleTreeMerger {
 			return treeA;
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++) childs[i] = merge(treeA.child(i), valueB);
-		return new SimpleNode(childs);
+		return createNode(childs);
 	}
 
 	private Object internMerge(Object valueA, Node treeB) {
@@ -52,7 +64,7 @@ class SimpleTreeMerger {
 			return treeB;
 		Object[] childs = new Object[8];
 		for (int i = 0; i < 8; i++) childs[i] = merge(valueA, treeB.child(i));
-		return new SimpleNode(childs);
+		return createNode(childs);
 	}
 
 	private Object internMerge(Object valueA, Object valueB) {

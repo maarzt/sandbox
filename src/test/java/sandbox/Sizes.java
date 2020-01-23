@@ -94,7 +94,7 @@ public class Sizes {
 		printSize(LeafImgs.create(type, 5, depth - 5, content));
 	}
 
-	private static void printSize(Object o) {
+	public static void printSize(Object o) {
 		long l = sizeOf.deepSizeOf(o);
 		double megaBytes = l / 1024.;
 		System.out.println(String.format("%s: %.2f kB", o.getClass().getSimpleName(), megaBytes));

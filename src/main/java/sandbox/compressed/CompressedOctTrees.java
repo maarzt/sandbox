@@ -42,6 +42,23 @@ public class CompressedOctTrees {
 		return new OctTree<>(depth, root.value());
 	}
 
+	public static OctTree< IntType > copy( OctTree< IntType > original ) {
+		ProxyNode< IntType > root = createRoot();
+		copy(root, original.getRoot());
+		return new OctTree< IntType >(original.getDepth(), root.value());
+	}
+
+	private static void copy(ProxyNode<IntType> result, Object original) {
+		if(original instanceof Node) {
+			result.makeNode();
+			for (int i = 0; i < 8; i++)
+				copy(result.childProxy(i), ((Node) original).child(i));
+			result.tryCollapse();
+		}
+		else
+			result.setValue((IntType) original);
+	}
+
 	public static OctTree< IntType > max(OctTree< IntType > a, OctTree< IntType > b) {
 		if( a.getDepth() != b.getDepth() )
 			throw new AssertionError();

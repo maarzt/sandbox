@@ -49,19 +49,33 @@ public class ProxyNode< T > {
 	}
 
 	public ProxyNode< T > childProxy(int i) {
-		if (vector <= 0) throw new AssertionError();
+		if (isLeaf()) throw new AssertionError();
 		if (child == null) child = new ProxyNode<>(tree);
 		child.setLinkIndex(vector + i);
 		return child;
 	}
 
 	public Object value() {
-		if (vector <= 0) return tree.valueMap.getValue(-vector);
+		if (isLeaf()) return tree.valueMap.getValue(-vector);
 		else return node;
 	}
 
 	private void setLinkIndex(int linkIndex) {
 		this.linkIndex = linkIndex;
 		vector = tree.data.get(linkIndex);
+	}
+
+	public void tryCollapse() {
+		if (isLeaf()) return;
+		int childVector = tree.data.get(vector);
+		if (childVector > 0) return;
+		for (int i = 1; i < 8; i++)
+			if (childVector != tree.data.get(vector + i)) return;
+		vector = childVector;
+		tree.data.set(linkIndex, vector);
+	}
+
+	private boolean isLeaf() {
+		return vector <= 0;
 	}
 }
