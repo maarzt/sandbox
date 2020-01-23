@@ -18,8 +18,8 @@ public class OctTrees {
 		return create(depth, intervalMask, one, zero);
 	}
 
-	public static OctTree< IntType > create(int depth,
-			IntervalMask intervalMask, IntType foreground, IntType background)
+	public static < T > OctTree< T > create(int depth,
+			IntervalMask intervalMask, T foreground, T background)
 	{
 		return new OctTree<>(depth, interval -> {
 			if (intervalMask.contains(interval)) return foreground;

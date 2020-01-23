@@ -7,11 +7,11 @@ import net.imglib2.RealPoint;
 
 public class Sphere implements IntervalMask {
 
-	private final RealPoint center;
+	private final RealLocalizable center;
 
 	private final double squaredRadius;
 
-	public Sphere(RealPoint center, double radius) {
+	public Sphere(RealLocalizable center, double radius) {
 		this.center = center;
 		this.squaredRadius = square(radius);
 	}

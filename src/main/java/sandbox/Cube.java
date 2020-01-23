@@ -3,6 +3,10 @@ package sandbox;
 import net.imglib2.Interval;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
+import net.imglib2.util.Intervals;
+import net.imglib2.util.Localizables;
+
+import java.util.Arrays;
 
 public class Cube implements Interval {
 
@@ -57,5 +61,18 @@ public class Cube implements Interval {
 
 	public Cube threadSafeCopy() {
 		return new Cube(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Cube))
+			return false;
+		Cube other = (Cube) obj;
+		return position.equals(other.position) && depth == other.depth;
+	}
+
+	@Override
+	public String toString() {
+		return "Cube " + Arrays.toString(Localizables.asLongArray(position)) + " " + (1 << depth);
 	}
 }
