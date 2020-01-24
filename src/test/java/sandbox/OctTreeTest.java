@@ -20,7 +20,7 @@ public class OctTreeTest {
 
 	private static final IntType one = new IntType(1);
 
-	private static final Sphere sphere = new Sphere(new RealPoint(50, 50, 50), 40);
+	private static final Sphere sphere = new Sphere(new Point(50, 50, 50), 40);
 
 	@Test
 	public void testOnePixel() {

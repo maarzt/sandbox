@@ -1,5 +1,6 @@
 package sandbox.lazy;
 
+import net.imglib2.Point;
 import net.imglib2.RealPoint;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class LazyTreeTest {
 
 	@Test
 	public void test() {
-		IntervalMask sphere = new Sphere(new RealPoint(0, 0, 0), 0.5);
+		IntervalMask sphere = new Sphere(new Point(0, 0, 0), 0.5);
 		Object tree = new LazyTree(1, sphere, ONE, ZERO);
 		Object expected = new SimpleNode(ONE, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO, ZERO);
 		assertEquals(expected, tree);

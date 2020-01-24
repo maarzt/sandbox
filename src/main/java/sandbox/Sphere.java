@@ -2,18 +2,16 @@ package sandbox;
 
 import net.imglib2.Interval;
 import net.imglib2.Localizable;
-import net.imglib2.RealLocalizable;
-import net.imglib2.RealPoint;
 
 public class Sphere implements IntervalMask {
 
-	private final RealLocalizable center;
+	private final Localizable center;
 
-	private final double squaredRadius;
+	private final long squaredRadius;
 
-	public Sphere(RealLocalizable center, double radius) {
+	public Sphere(Localizable center, double radius) {
 		this.center = center;
-		this.squaredRadius = square(radius);
+		this.squaredRadius = (long) (radius * radius);
 	}
 
 	@Override
@@ -23,11 +21,11 @@ public class Sphere implements IntervalMask {
 
 	@Override
 	public boolean contains(Interval interval) {
-		double squaredDistance = 0;
+		long squaredDistance = 0;
 		for (int d = 0; d < center.numDimensions(); d++) {
-			double c = center.getDoublePosition(d);
-			double max = interval.realMax(d);
-			double min = interval.realMin(d);
+			long c = center.getLongPosition(d);
+			long max = interval.max(d);
+			long min = interval.min(d);
 			squaredDistance += square( Math.max(max - c, c - min) );
 		}
 		return squaredDistance <= squaredRadius;
@@ -35,21 +33,21 @@ public class Sphere implements IntervalMask {
 
 	@Override
 	public boolean intersects(Interval interval) {
-		double squaredDistance = 0;
+		long squaredDistance = 0;
 		for (int d = 0; d < center.numDimensions(); d++) {
-			double c = center.getDoublePosition(d);
-			double max = interval.realMax(d);
-			double min = interval.realMin(d);
-			squaredDistance += square( ensureRange(0.0, min - c, max - c) );
+			long c = center.getLongPosition(d);
+			long max = interval.max(d);
+			long min = interval.min(d);
+			squaredDistance += square( ensureRange(0, min - c, max - c) );
 		}
 		return squaredDistance <= squaredRadius;
 	}
 
-	private static double ensureRange(double value, double min, double max) {
+	private static long ensureRange(long value, long min, long max) {
 		return Math.min(Math.max(value, min), max);
 	}
 
-	private double square(double value) {
+	private static long square(long value) {
 		return value * value;
 	}
 }

@@ -1,6 +1,7 @@
 package sandbox.lazy;
 
 import bdv.util.BdvFunctions;
+import net.imglib2.Point;
 import net.imglib2.RealPoint;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Util;
@@ -22,7 +23,7 @@ public class LazyMergeTreeDemo {
 		for (int i = 0; i < numberOfSegments; i++) {
 			System.out.println(i);
 			Sphere intervalMask = new Sphere(
-					new RealPoint(random.nextInt(size), random.nextInt(size),
+					new Point(random.nextInt(size), random.nextInt(size),
 							random.nextInt(size)), 20);
 			OctTree< IntType >
 					tree = LazyTree.octTree(depth, intervalMask, new IntType(i+1), new IntType(0));

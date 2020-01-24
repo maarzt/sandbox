@@ -2,6 +2,7 @@ package sandbox;
 
 import net.imglib2.Interval;
 import net.imglib2.Localizable;
+import net.imglib2.Point;
 import net.imglib2.RealPoint;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.type.logic.BitType;
@@ -14,10 +15,10 @@ import sandbox.leaf.LeafImgs;
 public class Sizes {
 
 	private static final Sphere point =
-			new Sphere(new RealPoint(100, 100, 100), 1);
+			new Sphere(new Point(100, 100, 100), 1);
 
 	private static final Sphere sphere =
-			new Sphere(new RealPoint(100, 100, 100), 100);
+			new Sphere(new Point(100, 100, 100), 100);
 
 	private static final IntervalMask dirty = new IntervalMask() {
 

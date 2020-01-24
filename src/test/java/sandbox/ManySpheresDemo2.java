@@ -1,6 +1,7 @@
 package sandbox;
 
 import bdv.util.BdvFunctions;
+import net.imglib2.Point;
 import net.imglib2.RealPoint;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -25,7 +26,7 @@ public class ManySpheresDemo2 {
 		for (int i = 0; i < numberOfSegments; i++) {
 			System.out.println(i);
 			Sphere intervalMask = new Sphere(
-					new RealPoint(random.nextInt(size), random.nextInt(size),
+					new Point(random.nextInt(size), random.nextInt(size),
 							random.nextInt(size)), 10	);
 			OctTree< IntType > a = OctTrees.create(depth, intervalMask, new IntType(i+1), new IntType(0));
 			c = OctTrees.max(c, a);

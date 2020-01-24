@@ -1,6 +1,7 @@
 package sandbox.compressed;
 
 import bdv.util.BdvFunctions;
+import net.imglib2.Point;
 import net.imglib2.RealPoint;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.test.ImgLib2Assert;
@@ -32,7 +33,7 @@ public class CompressedTreeTest {
 	}
 
 	public static void main(String... args) {
-		final Sphere sphere = new Sphere(new RealPoint(900, 400, 2000), 1000);
+		final Sphere sphere = new Sphere(new Point(900, 400, 2000), 1000);
 		int depth = 10;
 		OctTree< IntType > octTree = CompressedOctTrees.create(depth, sphere);
 		BdvFunctions.show(octTree, "experiment").setDisplayRange(0, 1);
