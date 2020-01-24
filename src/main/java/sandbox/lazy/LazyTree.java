@@ -4,6 +4,7 @@ import sandbox.Cube;
 import sandbox.IntervalMask;
 import sandbox.Node;
 import sandbox.OctTree;
+import sandbox.Sphere;
 
 public class LazyTree< T > implements Node {
 
@@ -36,6 +37,10 @@ public class LazyTree< T > implements Node {
 	{
 		return new OctTree<>(depth,
 				new LazyTree<>(depth, mask, foreground, background));
+	}
+
+	public static OctTree< Boolean > booleanOctTree(int depth, Sphere mask) {
+		return octTree(depth, mask, true, false);
 	}
 
 	@Override
