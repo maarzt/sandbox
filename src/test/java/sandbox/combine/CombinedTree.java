@@ -1,5 +1,6 @@
 package sandbox.combine;
 
+import gnu.trove.list.array.TIntArrayList;
 import net.imglib2.FinalInterval;
 import net.imglib2.Interval;
 import net.imglib2.Localizable;
@@ -43,7 +44,10 @@ public class CombinedTree< L > {
 
 	private final int depth;
 
-	private final MyNode root = new MyNode();
+	private final TIntArrayList data = new TIntArrayList();
+
+	private final ThreadLocal< ProxyNode > root =
+			ThreadLocal.withInitial(() -> new ProxyNode(data));
 
 	public CombinedTree(int depth) {
 		this.depth = depth;
@@ -54,18 +58,18 @@ public class CombinedTree< L > {
 	}
 
 	public int getValueIndex(Localizable position) {
-		MyNode node = root;
+		ProxyNode node = root.get();
 		long x = position.getLongPosition(0);
 		long y = position.getLongPosition(1);
 		long z = position.getLongPosition(2);
-		int setIndex = root.leafLabels;
+		int setIndex = node.getValue();
 		for (int d = depth - 1; d >= 0 && node.isNode(); d--) {
 			long bitX = (x >> d) & 1;
 			long bitY = (y >> d) & 1;
 			long bitZ = (z >> d) & 1;
 			long index = bitX | (bitY << 1) | (bitZ << 2);
 			node = node.child((int) index);
-			setIndex = union.applyAsInt(setIndex, node.leafLabels);
+			setIndex = union.applyAsInt(setIndex, node.getValue());
 		}
 		if (node.isLeaf()) return setIndex;
 		throw new AssertionError("Tree is to deep.");
@@ -88,10 +92,10 @@ public class CombinedTree< L > {
 			return r;
 		}, mapping);
 		Object labelRoot = tree.getRoot();
-		recursiveAddLabel(root, labelRoot, addLabel);
+		recursiveAddLabel(root.get(), labelRoot, addLabel);
 	}
 
-	private void recursiveAddLabel(MyNode node, Object labelNode,
+	private void recursiveAddLabel(ProxyNode node, Object labelNode,
 			IntUnaryOperator addLabel)
 	{
 		if (labelNode instanceof Node) {
@@ -103,50 +107,6 @@ public class CombinedTree< L > {
 						addLabel);
 		}
 		else if (labelNode.equals(true))
-			node.leafLabels = addLabel.applyAsInt(node.leafLabels);
-	}
-
-	private class MyNode {
-
-		private int leafLabels = 0;
-
-		private int nodeLabels = 0;
-
-		private Object[] children = null;
-
-		public boolean isLeaf() {
-			return children == null;
-		}
-
-		public boolean isNode() {
-			return !isLeaf();
-		}
-
-		public void makeNode() {
-			if (children == null) children =
-					new Object[] { new MyNode(), new MyNode(), new MyNode(),
-							new MyNode(), new MyNode(), new MyNode(),
-							new MyNode(), new MyNode() };
-		}
-
-		/**
-		 * Returns the set of all labels, that have this node as a leaf node
-		 * with value true;
-		 */
-		public Set< L > getContainingLabels() {
-			return mapping.getValue(nodeLabels);
-		}
-
-		/**
-		 * Returns the set of all labels, that have this node as an none leaf
-		 * node and the node is under a subtree specified by the covering cubes.
-		 */
-		public Set< L > getIntersectingLabels() {
-			return mapping.getValue(leafLabels);
-		}
-
-		public MyNode child(int i) {
-			return (MyNode) children[i];
-		}
+			node.setValue(addLabel.applyAsInt(node.getValue()));
 	}
 }
