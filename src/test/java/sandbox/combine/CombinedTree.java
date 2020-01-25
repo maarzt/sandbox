@@ -69,10 +69,14 @@ public class CombinedTree< L > {
 			long bitZ = (z >> d) & 1;
 			long index = bitX | (bitY << 1) | (bitZ << 2);
 			node = node.child((int) index);
-			setIndex = union.applyAsInt(setIndex, node.getValue());
+			setIndex = setUnionOnIndices(setIndex, node.getValue());
 		}
 		if (node.isLeaf()) return setIndex;
 		throw new AssertionError("Tree is to deep.");
+	}
+
+	private int setUnionOnIndices(int setIndex, int value) {
+		return (setIndex == 0) ? value : (value == 0 ? setIndex : union.applyAsInt(setIndex, value));
 	}
 
 	public RandomAccessibleInterval< IntType > indexImage() {
