@@ -26,7 +26,7 @@ import java.util.Random;
 public class ManySpheresDemo {
 
 	private static final int depth = 10;
-	private static final int n = 1000000 / 2;
+	private static final int n = 1000000;
 	private static final int size = 1 << depth;
 	private static final Random random = new Random();
 	private static final int radius = 5;
@@ -35,7 +35,7 @@ public class ManySpheresDemo {
 		StopWatch stopWatch = StopWatch.createAndStart();
 		RandomAccessibleInterval< IntType > img = combinedTree();
 		System.out.println(stopWatch);
-		Sizes.printSize(img);
+		//Sizes.printSize(img);
 		BdvFunctions.show(img, "sphere").setDisplayRange(0, n);
 	}
 
@@ -83,6 +83,7 @@ public class ManySpheresDemo {
 			OctTree< Boolean > a = LazyTree.booleanOctTree(depth, mask);
 			combinedTree.addLabel(i, a);
 		}
+		//combinedTree.memoryStatistic();
 		return combinedTree.indexImage();
 	}
 

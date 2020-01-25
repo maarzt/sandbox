@@ -10,15 +10,19 @@ import net.imglib2.converter.Converters;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Localizables;
 import net.imglib2.view.Views;
+import sandbox.Cube;
 import sandbox.Node;
 import sandbox.OctTree;
+import sandbox.Sizes;
 import sandbox.mapping.MappedBinaryOperator;
 import sandbox.mapping.MappedUnaryOperator;
 import sandbox.mapping.ValueMapping;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 
@@ -95,8 +99,24 @@ public class CombinedTree< L > {
 			r.add(value);
 			return r;
 		}, mapping);
-		Object labelRoot = tree.getRoot();
-		recursiveAddLabel(root.get(), labelRoot, addLabel);
+		List< Cube > cubes = CoveringCubes.calculate(tree);
+		for (Cube cube : cubes) {
+			Object labelRoot = tree.getRoot();
+			ProxyNode rootNode = root.get();
+			long x = cube.min(0);
+			long y = cube.min(1);
+			long z = cube.min(2);
+			for (int d = depth - 1; d >= cube.getDepth(); d--) {
+				long bitX = (x >> d) & 1;
+				long bitY = (y >> d) & 1;
+				long bitZ = (z >> d) & 1;
+				long index = bitX | (bitY << 1) | (bitZ << 2);
+				labelRoot = ((Node) labelRoot).child((int) index);
+				rootNode.makeNode();
+				rootNode = rootNode.child((int) index);
+			}
+			recursiveAddLabel(rootNode, labelRoot, addLabel);
+		}
 	}
 
 	private void recursiveAddLabel(ProxyNode node, Object labelNode,
@@ -104,13 +124,36 @@ public class CombinedTree< L > {
 	{
 		if (labelNode instanceof Node) {
 			node.makeNode();
-			//FIXME: This needs the idea of covering cubes
-			//node.nodeLabels = addLabel.applyAsInt(node.nodeLabels);
+			node.setOtherValue(addLabel.applyAsInt(node.getOtherValue()));
 			for (int i = 0; i < 8; i++)
 				recursiveAddLabel(node.child(i), ((Node) labelNode).child(i),
 						addLabel);
 		}
 		else if (labelNode.equals(true))
 			node.setValue(addLabel.applyAsInt(node.getValue()));
+	}
+
+	public void memoryStatistic() {
+		Sizes.printSize(mapping);
+		Sizes.printSize(union);
+		data.trimToSize();
+		Sizes.printSize(data);
+		System.out.println("data size:" + data.size());
+		int counter = 0;
+		long sum = 0;
+		int max = 0;
+		try {
+			while (true) {
+				int size = mapping.getValue(counter++).size();
+				sum += size;
+				max = Math.max(size, max);
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("Number of sets:" + counter);
+			System.out.println("Average set size:" + (double) sum / counter);
+			System.out.println("Max set size:" + max);
+		}
 	}
 }

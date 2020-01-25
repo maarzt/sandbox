@@ -7,6 +7,7 @@ import net.imglib2.util.Intervals;
 import net.imglib2.util.Localizables;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class Cube implements Interval {
 
@@ -74,5 +75,9 @@ public class Cube implements Interval {
 	@Override
 	public String toString() {
 		return "Cube " + Arrays.toString(Localizables.asLongArray(position)) + " " + (1 << depth);
+	}
+
+	public int getDepth() {
+		return depth;
 	}
 }
