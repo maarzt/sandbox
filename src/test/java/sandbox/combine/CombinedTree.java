@@ -28,20 +28,14 @@ import java.util.function.IntUnaryOperator;
 
 public class CombinedTree< L > {
 
-	private final ValueMapping< Set< L > > mapping = initValueMapping();
+	private final ValueMapping< TinySet > mapping = initValueMapping();
 
 	private final IntBinaryOperator union =
-			new MappedBinaryOperator<>(CombinedTree::setUnion, mapping);
+			new MappedBinaryOperator<>(TinySet::union, mapping);
 
-	private static < L > Set< L > setUnion(Set< L > a, Set< L > b) {
-		HashSet< L > r = new HashSet<>(a);
-		r.addAll(b);
-		return r;
-	}
-
-	private ValueMapping< Set< L > > initValueMapping() {
-		ValueMapping< Set< L > > mapping = new ValueMapping<>();
-		if (0 != mapping.getIndex(Collections.emptySet()))
+	private ValueMapping< TinySet > initValueMapping() {
+		ValueMapping< TinySet > mapping = new ValueMapping<>();
+		if (0 != mapping.getIndex(TinySet.emptySet()))
 			throw new AssertionError();
 		return mapping;
 	}
@@ -58,7 +52,7 @@ public class CombinedTree< L > {
 	}
 
 	public Set< L > getValue(Localizable position) {
-		return mapping.getValue(getValueIndex(position));
+		throw new UnsupportedOperationException();
 	}
 
 	public int getValueIndex(Localizable position) {
@@ -95,9 +89,7 @@ public class CombinedTree< L > {
 
 	public void addLabel(L value, OctTree< Boolean > tree) {
 		IntUnaryOperator addLabel = new MappedUnaryOperator<>(set -> {
-			HashSet< L > r = new HashSet<>(set);
-			r.add(value);
-			return r;
+			return TinySet.add(set, (Integer) value);
 		}, mapping);
 		List< Cube > cubes = CoveringCubes.calculate(tree);
 		for (Cube cube : cubes) {
