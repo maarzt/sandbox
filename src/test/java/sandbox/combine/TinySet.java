@@ -9,8 +9,11 @@ public class TinySet implements Set< Integer > {
 
 	private final Integer[] data;
 
+	private final int hashCode;
+
 	private TinySet(Integer[] data) {
 		this.data = data;
+		this.hashCode = initHashCode(data);
 	}
 
 	public static TinySet emptySet() {
@@ -98,11 +101,9 @@ public class TinySet implements Set< Integer > {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof TinySet))
-			return false;
+		if (!(obj instanceof TinySet)) return false;
 		TinySet other = (TinySet) obj;
-		if(this.data.length != other.data.length)
-			return false;
+		if (this.data.length != other.data.length) return false;
 		for (int i = 0; i < data.length; i++)
 			if (this.data[i] != other.data[i]) return false;
 		return true;
@@ -110,6 +111,10 @@ public class TinySet implements Set< Integer > {
 
 	@Override
 	public int hashCode() {
+		return hashCode;
+	}
+
+	private static int initHashCode(Integer[] data) {
 		int result = 898320837;
 		for (Integer value : data) result = result * 324792373 + value;
 		return result;
@@ -125,27 +130,24 @@ public class TinySet implements Set< Integer > {
 			Integer bValue = b[bIndex];
 			Integer min = aValue < bValue ? aValue : bValue;
 			result[rIndex++] = min;
-			if(aValue.equals(min)) aIndex++;
-			if(bValue.equals(min)) bIndex++;
+			if (aValue.equals(min)) aIndex++;
+			if (bValue.equals(min)) bIndex++;
 		}
-		while (aIndex < a.length)
-			result[rIndex++] = a[aIndex++];
-		while (bIndex < b.length)
-			result[rIndex++] = b[bIndex++];
+		while (aIndex < a.length) result[rIndex++] = a[aIndex++];
+		while (bIndex < b.length) result[rIndex++] = b[bIndex++];
 		return rIndex != result.length ? Arrays.copyOf(result, rIndex) : result;
 	}
 
-	static <T> Integer[] add(Integer[] array, int value) {
+	static < T > Integer[] add(Integer[] array, int value) {
 		Integer[] result = new Integer[array.length + 1];
 		int i = 0;
-		while(i < array.length && array[i] < value) {
+		while (i < array.length && array[i] < value) {
 			result[i] = array[i];
 			i++;
 		}
-		if(i < array.length && array[i].equals(value))
-			return array;
+		if (i < array.length && array[i].equals(value)) return array;
 		result[i] = value;
-		while(i < array.length) {
+		while (i < array.length) {
 			result[i + 1] = array[i];
 			i++;
 		}

@@ -25,8 +25,8 @@ import java.util.Random;
 
 public class ManySpheresDemo {
 
-	private static final int depth = 10;
-	private static final int n = 1000000;
+	private static final int depth = 8;
+	private static final int n = 50000;
 	private static final int size = 1 << depth;
 	private static final Random random = new Random();
 	private static final int radius = 5;
