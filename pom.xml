@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>23.1.1</version>
+		<version>29.0.0</version>
 	</parent>
 
 	<groupId>io.github.maarzt</groupId>
@@ -89,8 +89,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej</artifactId>
+			<groupId>io.scif</groupId>
+			<artifactId>scifio</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-ij</artifactId>
 		</dependency>
 		<!-- Test dependencies -->
 		<dependency>
@@ -109,6 +113,15 @@
 			<artifactId>jmh-generator-annprocess</artifactId>
 			<version>1.19</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>ui-behaviour</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+			<version>1.52o</version>
 		</dependency>
 	</dependencies>
 </project>
