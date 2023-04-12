@@ -2,14 +2,8 @@ package sandbox.leaf;
 
 import bdv.util.BdvFunctions;
 import net.imglib2.Point;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.RealPoint;
 import net.imglib2.img.Img;
-import net.imglib2.test.ImgLib2Assert;
-import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.integer.IntType;
-import sandbox.OctTree;
-import sandbox.OctTrees;
 import sandbox.Sphere;
 
 import java.util.Random;

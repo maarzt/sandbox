@@ -18,11 +18,8 @@ import sandbox.mapping.MappedBinaryOperator;
 import sandbox.mapping.MappedUnaryOperator;
 import sandbox.mapping.ValueMapping;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntUnaryOperator;
 

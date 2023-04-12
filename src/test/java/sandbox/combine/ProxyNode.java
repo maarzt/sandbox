@@ -1,7 +1,6 @@
 package sandbox.combine;
 
 import gnu.trove.list.array.TIntArrayList;
-import sandbox.Cube;
 
 public class ProxyNode {
 
