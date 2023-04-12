@@ -98,6 +98,11 @@ public class Sizes {
 	public static void printSize(Object o) {
 		long l = sizeOf.deepSizeOf(o);
 		double megaBytes = l / 1024.;
-		System.out.println(String.format("%s: %.2f kB", o.getClass().getSimpleName(), megaBytes));
+		String unit = "kB";
+		if (megaBytes > 1024) {
+			megaBytes /= 1024;
+			unit = "MB";
+		}
+		System.out.printf( "%s: %.2f %s%n", o.getClass().getSimpleName(), megaBytes, unit);
 	}
 }
