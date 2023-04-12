@@ -12,6 +12,7 @@ import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.StopWatch;
@@ -23,19 +24,21 @@ import sandbox.lazy.LazyTree;
 
 import java.util.Random;
 
+import org.ehcache.sizeof.SizeOf;
+
 public class ManySpheresDemo {
 
-	private static final int depth = 8;
-	private static final int n = 50000;
+	private static final int depth = 10;
+	private static final int n = 100_000;
 	private static final int size = 1 << depth;
 	private static final Random random = new Random();
-	private static final int radius = 5;
+	private static final int radius = 10;
 
 	public static void main(String... args) {
 		StopWatch stopWatch = StopWatch.createAndStart();
 		RandomAccessibleInterval< IntType > img = combinedTree();
 		System.out.println(stopWatch);
-		//Sizes.printSize(img);
+		Sizes.printSize(img);
 		BdvFunctions.show(img, "sphere").setDisplayRange(0, n);
 	}
 
@@ -72,7 +75,18 @@ public class ManySpheresDemo {
 			Integer value = i;
 			sphere.forEach(pixel -> pixel.add(value));
 		}
+		// displayRunLengthEncodingMemoryUsage( image );
 		return ints;
+	}
+
+	private static void displayRunLengthEncodingMemoryUsage( RandomAccessibleInterval< LabelingType< Integer > > image )
+	{
+		// display the amount of memory roughly used by the run length encoding in the class LabelRegions ===
+		LabelRegions< Integer > regions = new LabelRegions<>( image );
+		for( Integer value : regions.getExistingLabels() )
+			regions.getLabelRegion( value );
+		SizeOf sizeOf = SizeOf.newInstance();
+		System.out.println("LR size = " + ( sizeOf.deepSizeOf( regions ) - sizeOf.deepSizeOf( image ) ) / 1024 / 1024 + " MB" );
 	}
 
 	private static RandomAccessibleInterval< IntType > combinedTree() {
